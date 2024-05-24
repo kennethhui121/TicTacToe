@@ -1,21 +1,14 @@
 const express = require('express');
 const http = require('http');
-const socketIo = require('socket.io');
 const cors = require('cors');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
 const port = 5000;
 
 app.use(cors());
 app.use(express.json());
 
-let gameState = { 
-  history: [{ squares: Array(9).fill(null) }],
-  stepNumber: 0,
-  xIsNext: true,
-};
 
 // Calculate winner
 const calculateWinner = (squares) => { 
@@ -86,24 +79,6 @@ app.post('/api/bot-move', (req, res) => {
   res.json({ move });
 });
 
-// For Socket.IO connections
-io.on('connection', (socket) => {  
-  console.log('New client connected');
-  
-  // Send game to other player  
-  socket.emit('gameState', gameState);
-  
-  // Listen for other player move  
-  socket.on('makeMove', (data) => {    
-    gameState = data;    
-    // Update the game    
-    io.emit('gameState', gameState);  
-  });
-  
-  socket.on('disconnect', () => {    
-    console.log('Client disconnected');  
-  });
-});
 
 server.listen(port, () => {  
   console.log(`Server running at http://localhost:${port}`);
