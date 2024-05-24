@@ -5,29 +5,39 @@ import Status from '../components/Status';
 import MoveHistory from '../components/MoveHistory';
 import StatusModal from '../components/StatusModal';
 import { calculateWinner, getBotMove } from './Bot';
-import axios from 'axios';
 
 const LOCAL_STORAGE_KEY = 'tic-tac-toe';
 
 const Game = () => {
-  const { mode } = useParams();
-  const navigate = useNavigate();
-  const [isBotMode] = useState(mode === 'bot');
+  const { mode } = useParams(); //gets mode param from URL
+  const navigate = useNavigate(); //hook for navi
+  const [isBotMode] = useState(mode === 'bot'); //play against bot or not
   const [history, setHistory] = useState(loadGameFromLocalStorage() || [{ squares: Array(9).fill(null) }]);
-  const [stepNumber, setStepNumber] = useState(0);
-  const [xIsNext, setXIsNext] = useState(false);
-  const [showMoveHistory, setShowMoveHistory] = useState(true);
-  const [isWinner, setIsWinner] = useState(null);
-  const [isTie, setIsTie] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [stepNumber, setStepNumber] = useState(0); //current step
+  const [xIsNext, setXIsNext] = useState(false); 
+  const [showMoveHistory, setShowMoveHistory] = useState(true); 
+  const [isWinner, setIsWinner] = useState(null); 
+  const [isTie, setIsTie] = useState(false) 
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  
   useEffect(() => {
-    //lets users return to where they left off
+    //save local history
     saveGameToLocalStorage(history);
   }, [history]);
 
   useEffect(() => {
-    //to get the bot. 
+    //check for ties
+    const currentSquares = history[stepNumber].squares;
+    const filledSquares = currentSquares.filter(square => square !== null).length;
+  
+    if (!calculateWinner(currentSquares) && filledSquares === 9) {
+      setIsTie(true);
+      setIsModalOpen(true);
+    }
+  }, [history, stepNumber]);
+
+  useEffect(() => {
+    //paly with bot
     if (isBotMode && !xIsNext) {
       const handleBotMove = async () => {
         const current = history[stepNumber];
@@ -39,19 +49,8 @@ const Game = () => {
     }
   }, [xIsNext, isBotMode, history, stepNumber]);
 
-  useEffect(() => {
-    //checks for tie.
-    const currentSquares = history[stepNumber].squares;
-    const filledSquares = currentSquares.filter(square => square !== null).length;
-  
-    if (!calculateWinner(currentSquares) && filledSquares === 9) {
-      setIsTie(true);
-      setIsModalOpen(true);
-    }
-  }, [history, stepNumber]);
-
   const handleClick = async (i, isBot = false) => {
-    //player vs player handler
+    //handle click for pvp
     if (!isBot && isBotMode && !xIsNext) {
       return;
     }
@@ -71,29 +70,16 @@ const Game = () => {
       setIsWinner(winner);
       setIsModalOpen(true);
     }
-
-    // If not playing against the bot, send the move to the server
-    if (!isBot && !isBotMode) {
-      try {
-        const response = await axios.post('/api/make-move', {
-          squares: squares,
-          isPlayerX: xIsNext // Send current player turn to the server
-        });
-        console.log('Move sent to server:', response.data);
-      } catch (error) {
-        console.error('Error sending move to server:', error);
-      }
-    }
   };
 
-  //allows us to reset to a certain move/play
+  //return to a move
   const jumpTo = (step) => {
     setStepNumber(step);
     setXIsNext(step % 2 === 0);
     setIsWinner(null);
   };
 
-  //resets the game
+  //reset
   const resetGame = () => {
     setHistory([{ squares: Array(9).fill(null) }]);
     setStepNumber(0);
@@ -137,11 +123,13 @@ const Game = () => {
 
 export default Game;
 
+//load game history from local storage
 const loadGameFromLocalStorage = () => {
   const savedGame = localStorage.getItem(LOCAL_STORAGE_KEY);
   return savedGame ? JSON.parse(savedGame) : null;
 };
 
+//save history to storage
 const saveGameToLocalStorage = (history) => {
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(history));
 };

@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 
-// Calculate winner
+//calc winner
 const calculateWinner = (squares) => { 
   const lines = [
     [0, 1, 2],
@@ -31,9 +31,9 @@ const calculateWinner = (squares) => {
   return null;
 };
 
-// Bot moves
+//Bot moves
 const getBotMove = (squares) => {  
-  // Check if bot can win  
+  //check to see if bot can win
   for (let i = 0; i < squares.length; i++) {    
     if (!squares[i]) {      
       const botMove = squares.slice();      
@@ -44,7 +44,7 @@ const getBotMove = (squares) => {
     }  
   }
 
-  // Check if player can win  
+  //stop player win  
   for (let i = 0; i < squares.length; i++) {    
     if (!squares[i]) {      
       const botMove = squares.slice();      
@@ -55,12 +55,12 @@ const getBotMove = (squares) => {
     }  
   }
 
-  // Take center square if can  
+  //take center square if open 
   if (!squares[4]) {    
     return 4;  
   }
 
-  // Bot move if can win or stop a win  
+  //bot move otherwise
   const availableMoves = squares.reduce((acc, square, index) => {    
     if (!square) {      
       acc.push(index);    
@@ -68,11 +68,11 @@ const getBotMove = (squares) => {
     return acc;  
   }, []);
 
-  // Pick the move  
+  //plick move
   return availableMoves[Math.floor(Math.random() * availableMoves.length)];
 };
 
-// Bot endpoint
+//Bot endpoint
 app.post('/api/bot-move', (req, res) => {  
   const { squares } = req.body;  
   const move = getBotMove(squares);  
