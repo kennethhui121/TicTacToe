@@ -1,0 +1,111 @@
+/* App.css */
+
+body {
+  font-family: sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-board {
+  margin-bottom: 20px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 10px;
+}
+
+.square {
+  width: 100px;
+  height: 100px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: lightblue;
+  border: 1px solid darkblue;
+  cursor: pointer;
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.container {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.button-ingamecontainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center; 
+  align-items: center; 
+  margin-bottom: 10px;
+  gap: 10px; 
+}
+
+button {
+  margin: 0; 
+  padding: 8px 10px;
+  color: #1b1b32;
+  background-color: #d0d0d5;
+  border: 2px solid #1b1b32;
+  font-size: 1.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 650;
+  cursor: pointer; 
+}
+
+.button-move{
+  padding: 4px 6px; /* Smaller padding */
+  font-size: 1rem; /* Smaller font size */
+  margin: 5px; /* Adjust margin if needed */
+  color: #1b1b32;
+  background-color: #d0d0d5;
+  border: 2px solid #1b1b32;
+  font-weight: 650;
+}
+
+button:hover {
+  background-color: #1b1b32;
+  color: #d0d0d5; 
+}
